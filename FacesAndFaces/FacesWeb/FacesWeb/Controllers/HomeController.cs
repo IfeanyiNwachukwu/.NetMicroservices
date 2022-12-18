@@ -47,7 +47,7 @@ namespace FacesWeb.Controllers
                 await uploadedFile.CopyToAsync(memory);
             }
             model.ImageData = memory.ToArray();
-            model.ImageUrl = model.File.FileName;
+            model.PictureUrl = model.File.FileName.ToString();
             model.OrderId = Guid.NewGuid(); 
 
             var sendToUri = new Uri($"{RabbitMqMassTransitConstants.RabbitMquri}" +
@@ -62,7 +62,7 @@ namespace FacesWeb.Controllers
                     model.OrderId,
                     model.UserEmail,
                     model.ImageData,
-                    model.ImageUrl,
+                    model.PictureUrl,
                 }
                 );
 

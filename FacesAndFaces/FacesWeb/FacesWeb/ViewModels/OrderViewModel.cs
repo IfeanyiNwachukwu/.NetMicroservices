@@ -14,9 +14,8 @@ namespace FacesWeb.ViewModels
 
         [Display(Name = "Image File")]
         public IFormFile File { get; set; }
-
-        [Display(Name = "ImageUrl")]
-        public string ImageUrl { get; set; }
+        [Display(Name = "PictureUrl")]
+        public string PictureUrl { get; set; }
 
         [Display(Name = "Order Status")]
         public string StatusString { get; set; }
