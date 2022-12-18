@@ -58,6 +58,18 @@ namespace OrderAPI
             }));
             services.AddSingleton<IHostedService, BusService>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .SetIsOriginAllowed((host) => true)
+                       .AllowCredentials());
+
+
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -74,6 +86,7 @@ namespace OrderAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderAPI v1"));
             }
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 

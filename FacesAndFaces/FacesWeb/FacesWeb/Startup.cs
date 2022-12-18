@@ -1,3 +1,4 @@
+using FacesWeb.RestClients;
 using FacesWeb.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace FacesWeb
                 }
 
                 ));
+            services.AddHttpClient<IOrderManagementAPI,OrderManagementAPI>();
             services.AddControllersWithViews();
         }
 

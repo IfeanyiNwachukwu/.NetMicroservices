@@ -11,6 +11,7 @@
     <PackageReference Include="MassTransit" Version="6.2.5-develop.2570" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.2.5-develop.2570" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="6.2.5-develop.2570" />
+    <PackageReference Include="Refit" Version="5.1.67" />
   </ItemGroup>
 
 
