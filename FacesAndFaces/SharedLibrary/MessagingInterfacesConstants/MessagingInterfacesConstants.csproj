@@ -10,8 +10,4 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="6.2.5-develop.2570" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Events\" />
-  </ItemGroup>
-
 </Project>
