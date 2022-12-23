@@ -4,13 +4,10 @@ using MassTransit;
 using MessagingInterfacesConstants.Commands;
 using MessagingInterfacesConstants.Constants;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FacesWeb.Controllers
@@ -41,14 +38,14 @@ namespace FacesWeb.Controllers
         public async Task<IActionResult> RegisterOrder(OrderViewModel model)
         {
             MemoryStream memory = new MemoryStream();
-            
-            using(var uploadedFile = model.File.OpenReadStream())
+
+            using (var uploadedFile = model.File.OpenReadStream())
             {
                 await uploadedFile.CopyToAsync(memory);
             }
             model.ImageData = memory.ToArray();
             model.PictureUrl = model.File.FileName.ToString();
-            model.OrderId = Guid.NewGuid(); 
+            model.OrderId = Guid.NewGuid();
 
             var sendToUri = new Uri($"{RabbitMqMassTransitConstants.RabbitMquri}" +
                 $"{RabbitMqMassTransitConstants.RegisterOrderCommandQueue}"

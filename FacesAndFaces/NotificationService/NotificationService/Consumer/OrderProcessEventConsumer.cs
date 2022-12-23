@@ -20,7 +20,7 @@ namespace NotificationService.Consumer
 
         public async Task Consume(ConsumeContext<IOrderProcessedEvent> context)
         {
-            var rootFolder = AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin"));
+            var rootFolder = AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin")); 
             var result = context.Message;
             var facesData = result.Faces;
             if (facesData.Count < 1)
@@ -32,10 +32,20 @@ namespace NotificationService.Consumer
                 int j = 0;
                 foreach (var face in facesData)
                 {
-                    MemoryStream ms = new MemoryStream(face);
-                    var image = Image.FromStream(ms);
-                    image.Save(rootFolder + "/Images/face" + j + ".jpg", ImageFormat.Jpeg);
-                    j++;
+                    try
+                    {
+                        MemoryStream ms = new MemoryStream(face);
+                        var image = Image.FromStream(ms);
+                        image.Save(rootFolder + "/Images/face" + j + ".png", ImageFormat.Png);
+                        j++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{ex.Message} - {ex.Source}");
+                        Console.WriteLine($"{ex.StackTrace}");
+                        throw ex;
+                    }
+                 
                 }
             }
             // Here we will add the Email Sending code

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using OrderAPI.Hubs;
 using OrderAPI.Messages.Consumers;
 using OrderAPI.Persistence;
 using OrderAPI.Services;
@@ -32,6 +33,11 @@ namespace OrderAPI
                 Configuration.GetConnectionString("OrdersContextConnection")
             ));
 
+            services.AddSignalR()
+                .AddJsonProtocol(options =>
+                {
+                    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                });
             services.AddHttpClient();
             services.AddTransient<IOrdersRepository, OrdersRepository>();
            
@@ -39,6 +45,7 @@ namespace OrderAPI
                 c =>
                 {
                     c.AddConsumer<RegisterOrderCommandConsumer>();
+                    c.AddConsumer<OrderDispatchedEventConsumer>();
                 });
 
 
@@ -50,6 +57,17 @@ namespace OrderAPI
                     e.PrefetchCount = 16;
                     e.UseMessageRetry(x => x.Interval(2, TimeSpan.FromSeconds(10)));
                     e.Consumer<RegisterOrderCommandConsumer>(provider);
+
+                });
+
+                cfg.ReceiveEndpoint(RabbitMqMassTransitConstants.OrderDispatchedServiceQueue, e =>
+                {
+                    e.PrefetchCount = 16;
+                    e.UseMessageRetry(x => x.Interval(2, 100));
+
+
+                    e.Consumer<OrderDispatchedEventConsumer>(provider);
+                    //  EndpointConvention.Map<OrderDispatchedEvent>(e.InputAddress);
 
                 });
 
@@ -97,6 +115,7 @@ namespace OrderAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<OrderHub>("/orderhub");
             });
         }
     }

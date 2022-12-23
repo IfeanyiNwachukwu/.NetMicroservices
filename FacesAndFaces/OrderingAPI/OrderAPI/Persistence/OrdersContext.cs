@@ -18,7 +18,6 @@ namespace OrderAPI.Persistence
                 .Entity<Order>()
                 .Property(p => p.Status)
                 .HasConversion(converter);
-
         }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }

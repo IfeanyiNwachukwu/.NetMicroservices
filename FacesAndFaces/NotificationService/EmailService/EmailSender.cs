@@ -3,15 +3,30 @@ using System.Linq;
 using System;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
-
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace EmailService
 {
     public class EmailSender : IEmailSender
     {
         private readonly EmailConfig _emailConfig;
-        public EmailSender()
+        private IConfigurationRoot _configuration;
+        public EmailSender(EmailConfig emailConfig)
         {
+            var builder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+            _emailConfig = emailConfig;
+
+            //_firsemailBody = _rootConfiguration.ConfigurationRoot.GetValue<string>("FIRSmailBody");
+
+            _emailConfig.From = _configuration.GetValue<string>("EmailConfiguration:From");
+            _emailConfig.Username = _configuration.GetValue<string>("EmailConfiguration:Username");
+            _emailConfig.Password = _configuration.GetValue<string>("EmailConfiguration:Password");
+            _emailConfig.SmtpServer = _configuration.GetValue<string>("EmailConfiguration:SmtpServer");
 
         }
         public async Task SendEmailAsync(Message message)
@@ -26,6 +41,8 @@ namespace EmailService
             emailMessage.From.Add(new MailboxAddress(_emailConfig.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
+         
+
             var bodyBuilder = new BodyBuilder { HtmlBody = string.Format("<h2 style='color:red;'>{0}</h2>", message.Content) };
             if (message.Attachments != null && message.Attachments.Any())
             {
